@@ -29,20 +29,25 @@ func NewFactView(c *fiber.Ctx) error {
 func CreateFact(c *fiber.Ctx) error {
 	fact := new(models.Fact)
 	if err := c.BodyParser(fact); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return NewFactView(c)
 	}
-	database.DB.Db.Create(&fact)
-	return ConfirmationView(c)
+	// если на этом этапе будет возвращена ошибка возвратим форму для создания нового факта
+	result := database.DB.Db.Create(&fact)
+	if result.Error != nil {
+		return NewFactView(c)
+	}
+	return ListFacts(c)
 
 }
 
-func ConfirmationView(c *fiber.Ctx) error {
+func ShowFact(c *fiber.Ctx) error {
+	fact := models.Fact{}
+	id := c.Params("id")
 
-	return c.Render("confirmation", fiber.Map{
-		"Title":    "New Facts",
-		"Subtitle": "Add more wonderful facts to the list!",
+	database.DB.Db.Where("id = ?", id).First(&fact)
+
+	return c.Render("show", fiber.Map{
+		"Title": "Single Fact",
+		"Fact":  fact,
 	})
-
 }
