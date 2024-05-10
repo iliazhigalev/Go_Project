@@ -1,15 +1,17 @@
 <div class="container">
     {{ if .Facts}}
         {{ range .Facts}}
-        <div class="fact-item">
-            <div class="question-wrapper">
-                <p class="question">{{ .Question }}</p>
-                <button class="answer-toggle">Toogle answer</button>
+        <a href="/fact/{{ .ID }}">
+            <div class="fact-item">
+                <div class="question-wrapper">
+                    <p class="question">{{ .Question }}</p>
+                    <div class="action">
+                        {{ template "icon-arrow-right" .}}
+                    </div>
+                </div>
+            
             </div>
-            <div class="answer-wrapper">
-                <p class="answer">{{ .Answer }}</p>
-            </div>
-        </div>
+        </a>
         {{ end }}
     {{ else }}
         <div class="no-facts">
