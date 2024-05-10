@@ -13,4 +13,39 @@
             answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
         } );
     }
+
+    const editForm = document.querySelector('#form-update-fact')
+    const factToEdit = editForm && editForm.dataset.factid
+
+
+    editForm && editForm.addEventListener('submit', (event) => {
+        event.preventDefault()
+
+        const formData = Object.fromEntries(new FormData(editForm));
+
+        return fetch(`/fact/${factToEdit}`, {
+                    // Use the PATCH method
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(() => document.location.href=`/fact/${factToEdit}`)
+    })
+
+
+
+
+    const deleteButton = document.querySelector('#delete-button')
+    const factToDelete = deleteButton && deleteButton.dataset.factid
+
+    deleteButton && deleteButton.addEventListener('click', () => {
+        const result = confirm("Are you sure you want to delete this fact?")
+        
+        if (!result) return
+
+        return fetch(`/fact/${factToDelete}`, { method: 'DELETE' })
+                .then(() => document.location.href="/")
+    })
 })()
